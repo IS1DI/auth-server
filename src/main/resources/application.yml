@@ -1,0 +1,55 @@
+spring:
+    data:
+        mongodb:
+            database: usersDB
+            uri: ${MONGODB_URI:mongodb://localhost:27017}
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+    security:
+        cors:
+            allowed-origins:
+                - "https://sovcomstudents.ru"
+                - "http://sovcomstudents.ru"
+                - "http://*.sovcomstudents.ru"
+                - "https://*.sovcomstudents.ru"
+                - "http://localhost:3000"
+        oauth2:
+            authorization-server:
+                client:
+                    front:
+                        token:
+                            access-token-time-to-live: 600s
+                        registration:
+                            client-id: ${FRONT_ID:front}
+                            client-secret: ${FRONT_SECRET:$2a$10$bzdW33UHuqqNAob0RF0ZruKqOcpqDUxBMqkxB4Msep8iG2s8rs5Xi}
+                            client-authentication-methods:
+                                - client_secret_basic
+                            authorization-grant-types:
+                                - client_credentials
+                                - authorization_code
+                                - refresh_token
+                            redirect-uris:
+                                - ${FRONT_REDIRECT_URI:http://localhost:3000/authorized}
+                            scopes:
+                                - openid
+                        require-authorization-consent: ${FRONT_APPROVE_PAGE:true}
+                        require-proof-key: false
+
+                issuer: ${ISSUER:http://localhost:9000}
+                endpoint:
+                    oidc:
+                        client-registration-uri: ${REGISTER:/clientregistration}
+                        user-info-uri: ${USER_INFO:/userinfo}
+                    jwk-set-uri: ${JWK:/oauth2/jwks}
+                    token-revocation-uri: ${REVOCATION:/oauth2/revoke}
+                    token-introspection-uri: ${INTROSPECT:/oauth2/introspect}
+                    token-uri: ${TOKEN:/oauth2/token}
+                    authorization-uri: ${AUTHORIZE:/oauth2/authorize}
+        success-url: ${SUCCESS_URL_REDIRECT:https://sovcomstudents.ru/authorized}
+logging:
+    level:
+        org.springframework.security: trace
+server:
+    port: ${SERVER_PORT:9000}
